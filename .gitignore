@@ -8,6 +8,7 @@ __pycache__/
 
 #Reference
 OldS/
+OpenCV/
 # Distribution / packaging
 .Python
 build/
