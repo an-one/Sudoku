@@ -18,6 +18,8 @@ def findcontours(img, original):
         num_corners = len(approx)
         if num_corners == 4 and area > 1000:
             polygon = cnt
+            print('\n\n')
+            print(approx)
             break
 
     if polygon is not None:

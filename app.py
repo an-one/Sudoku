@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 import time as t
-import Process.img_processing as img_processing
+import img_processing
+import calculation
 capture = cv2.VideoCapture(0)
 
 frame_hight = 10
@@ -24,8 +25,7 @@ while True:
         img_corner = frame.copy() 
         prev = t.time()
         result = img_processing.imgprocess(frame)
-        #r = 
-        #corner  = img_corner.
+        corner  = calculation.findcontours(result,frame)
         cv2.imshow('Video0', frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
