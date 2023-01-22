@@ -11,7 +11,7 @@ frame_width = 10
 capture.set(3, frame_width)
 capture.set(4, frame_hight)
 capture.set(10, 150)
-frame_rate = 1
+frame_rate = 24
 prev = 0
 _, shape = capture.read()
 
@@ -26,9 +26,16 @@ while True:
         prev = t.time()
         result = img_processing.imgprocess(frame)
         corner  = calculation.findcontours(result,frame)
-        cv2.imshow('Video0', frame)
+        if corner:
+            cut_unprocessed, matrix = calculation.cut_extra_image(corner, frame)
+            cut_processed = img_processing.imgprocess(cut_unprocessed)
 
+        print(corner)
+        cv2.imshow('Video0', frame)
+        #cv2.imshow('v1',cut_processed)
+        #cv2.imshow('v',result)
     if cv2.waitKey(1) & 0xFF == ord('q'):
+        print('Stopped Computing')
         break
 capture.release()
 cv2.destroyAllWindows()

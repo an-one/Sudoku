@@ -18,8 +18,6 @@ def findcontours(img, original):
         num_corners = len(approx)
         if num_corners == 4 and area > 1000:
             polygon = cnt
-            print('\n\n')
-            print(approx)
             break
 
     if polygon is not None:
@@ -46,9 +44,28 @@ def findcontours(img, original):
 def find_extreme_corners(polygon, limit_fn, compare_fn):
     # limit_fn is the min or max function
     # compare_fn is the np.add or np.subtract function
-
-    # if we are trying to find bottom left corner, we know that it will have the smallest (x - y) value
     section, _ = limit_fn(enumerate([compare_fn(pt[0][0], pt[0][1]) for pt in polygon]),key=operator.itemgetter(1))
     return polygon[section][0][0], polygon[section][0][1]    
+
 def draw_extreme_corners(pts, original):
-    cv2.circle(original, pts, 7, (0, 255, 0), cv2.FILLED)
+    cv2.circle(original, pts, 5, (0, 255, 0), cv2.FILLED)
+
+def cut_extra_image(corners, original):
+    # we will be warping these points
+    corners = np.array(corners, dtype='float32')
+    top_left, top_right, bot_right, bot_left = corners
+
+    # find the best side width, since we will be warping into a square, height = length
+    width = int(max([
+        np.linalg.norm(top_right - bot_right),
+        np.linalg.norm(top_left - bot_left),
+        np.linalg.norm(bot_right - bot_left),
+        np.linalg.norm(top_left - top_right)
+    ]))
+
+    # create an array with shows top_left, top_right, bot_left, bot_right
+    mapping = np.array([[0, 0], [width - 1, 0], [width - 1, width - 1], [0, width - 1]], dtype='float32')
+
+    matrix = cv2.getPerspectiveTransform(corners, mapping)
+
+    return cv2.warpPerspective(original, matrix, (width, width)), matrix    
