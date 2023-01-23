@@ -53,19 +53,15 @@ def draw_extreme_corners(pts, original):
 def cut_extra_image(corners, original):
     # we will be warping these points
     corners = np.array(corners, dtype='float32')
+    
     top_left, top_right, bot_right, bot_left = corners
-
+    
     # find the best side width, since we will be warping into a square, height = length
-    width = int(max([
-        np.linalg.norm(top_right - bot_right),
-        np.linalg.norm(top_left - bot_left),
-        np.linalg.norm(bot_right - bot_left),
-        np.linalg.norm(top_left - top_right)
-    ]))
-
+    width = int(max([np.linalg.norm(top_right - bot_right),np.linalg.norm(top_left - bot_left),np.linalg.norm(bot_right - bot_left),np.linalg.norm(top_left - top_right)]))
+    #print(np.linalg.norm(top_right - bot_right),top_right - bot_right,np.linalg.norm(top_left - bot_left),top_left - bot_left,np.linalg.norm(bot_right - bot_left),bot_right - bot_left,np.linalg.norm(top_left - top_right),top_left - top_right,width)
     # create an array with shows top_left, top_right, bot_left, bot_right
     mapping = np.array([[0, 0], [width - 1, 0], [width - 1, width - 1], [0, width - 1]], dtype='float32')
 
     matrix = cv2.getPerspectiveTransform(corners, mapping)
-
-    return cv2.warpPerspective(original, matrix, (width, width)), matrix    
+    
+    return cv2.warpPerspective(original, matrix, (width, width))   
